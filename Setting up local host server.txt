@@ -1,0 +1,7 @@
+run bash as admin
+
+cd desktop -> the file folder
+
+run command 
+
+py -m http.server

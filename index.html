@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>Project Test</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+    <body><button onclick="playMusic()">Zoo Background Sound</button>
+    A for animal, F for fence
+  </body>
+<body>
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #000;
+            color: #fff;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+    <!-- 0.1 Add the three.js library -->
+    <script src="js/three.js"></script>
+    <!-- 0.2 Add the trackball code -->
+    <script src="js/OrbitControls.js"></script>
+    <!-- 0.3 Add the polygon loader -->
+    <script src="js/PLYLoader.js"></script>
+    <script src="js/OBJLoader.js"></script>
+    <!-- 0.4 Add extra js files for project -->
+    <script src="js/dat.gui.min.js"></script>
+    <script src="js/rhinoMesh.js"></script>
+    <script src="js/pinguMesh.js"></script>
+    <script src="js/horseMesh.js"></script>
+    <script src="js/wolfply.js"></script>
+    <script src="js/chim.js"></script>
+    <script src="js/dog.js"></script>
+    <script src="js/caretaker.js"></script>
+    <script src="js/house.js"></script>
+    <script src="js/treeMesh.js"></script>
+    <script src="js/rockMesh.js"></script>
+    <script src="js/rock2Mesh.js"></script>
+    <script src="js/raycasterFunction.js"></script>
+    <script src="js/changeCol.js"></script>
+    <script src="js/toggleWireFrameFence.js"></script>
+    <script src="js/toggleWireFrameAnimal.js"></script>
+    <script src="js/soundButton.js"></script>
+    <!--    <script src="js/spinAnimal.js"></script>-->
+
+
+    <script>
+        // Our Javascript will go here.
+        //1-5 Lesson 1, 6- .. Lesson 2.
+
+        // 1. Create the scene
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+        //scene.fog = new THREE.FogExp2(0xefd1b5, 0.002);
+
+        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10000);
+        camera.position.set(0, 360, 600);
+        //camera.lookAt(0, -0.4, 1);
+
+        // 1.1 Create the WebGLRenderer
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        // 5. Add the resize function
+        function resize() {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.render(scene, camera);
+        }
+        window.addEventListener('resize', resize);
+
+
+        //11. Create the light
+        var light_camera = new THREE.PointLight({
+            color: 0xffffff
+        }, 0.5);
+        camera.add(light_camera);
+        scene.add(camera);
+
+        var light_ambient = new THREE.AmbientLight({
+            color: 0x000000
+        }, 0.7);
+        scene.add(light_ambient);
+
+        // 7. Matrix Scene create
+        function CreateScene() {
+            document.onkeydown = function(ev) {
+                var key;
+                ev = ev || event;
+                key = ev.keyCode;
+                if (key == 38 || key == 40) {
+                    ev.cancelBubble = true;
+                    ev.returnValue = false;
+                }
+            }
+        }
+
+        //  2.3 Create the floor
+        var textureLoader = new THREE.TextureLoader();
+        grassT = textureLoader.load("img/grass01.jpg");
+        grassM = textureLoader.load("img/grass01_n.jpg");
+        fenceT = textureLoader.load("img/Wood-Texture-Fence.jpg");
+        fenceNM = textureLoader.load("img/192_norm.jpg");
+
+
+        var geometry_fence = new THREE.BoxGeometry(465, 60, 5);
+        var geometry_fence_long = new THREE.BoxGeometry(5, 60, 697.5);
+        var material_fence = new THREE.MeshPhongMaterial({
+//            color: 0xffffff,
+            map: fenceT,
+            normalMap: fenceNM
+        });
+        material_fence.wireframe = false;
+        material_fence.receiveShadow = true;
+        material_fence.castShadow = true;
+        fenceT.wrapS = fenceT.wrapT = THREE.RepeatWrapping;
+        fenceT.repeat = new THREE.Vector2(5, 5);
+        fenceT.anisotropy = 16;
+
+        var fence0 = new THREE.Mesh(geometry_fence, material_fence);
+        fence0.position.z += 230;
+
+        var fence1 = new THREE.Mesh(geometry_fence_long, material_fence);
+        fence1.position.x += 230;
+                fence1.position.z += 115;
+
+
+        var fence2 = new THREE.Mesh(geometry_fence_long, material_fence);
+                fence2.position.z += 115;
+
+        var fence3 = new THREE.Mesh(geometry_fence, material_fence);
+
+        var fence4 = new THREE.Mesh(geometry_fence, material_fence);
+        fence4.position.z -= 230;
+
+        var fence5 = new THREE.Mesh(geometry_fence_long, material_fence);
+        fence5.position.x -= 230;
+        fence5.position.z += 115;
+
+        var fence6 = new THREE.Mesh(geometry_fence, material_fence);
+        fence6.position.z += 460;
+
+        fence0.castShadow = true;
+        fence1.castShadow = true;
+        fence2.castShadow = true;
+        fence3.castShadow = true;
+        fence4.castShadow = true;
+        fence5.castShadow = true;
+        fence0.receiveShadow = true;
+        fence1.receiveShadow = true;
+        fence2.receiveShadow = true;
+        fence3.receiveShadow = true;
+        fence4.receiveShadow = true;
+        fence5.receiveShadow = true;
+        scene.add(fence0);
+        scene.add(fence1);
+        scene.add(fence2);
+        scene.add(fence3);
+        scene.add(fence4);
+        scene.add(fence5);
+        scene.add(fence6)
+
+        var material_floor = new THREE.MeshPhongMaterial({
+            color: 0xc8d2bf, //0x4aa400
+            map: grassT,
+            normalMap: grassM
+        });
+        material_floor.side = THREE.DoubleSide;
+        grassT.wrapS = grassT.wrapT = THREE.RepeatWrapping;
+        grassT.repeat = new THREE.Vector2(200, 200);
+        grassT.anisotropy = 16;
+        grassT.reice
+
+        material_floor.shininess = 0;
+
+        var geometry_floor = new THREE.PlaneBufferGeometry(5000, 5000);
+        var floor = new THREE.Mesh(geometry_floor, material_floor);
+        floor.position.y -= 0.5;
+        floor.rotation.x = Math.PI / 2;
+        floor.castShadow = false;
+        scene.add(floor);
+        floor.name = "floor_mesh";
+
+
+
+
+        //the stuff to visualize the light
+        var geometry_spotlight_mesh = new THREE.SphereGeometry(5, 8, 8);
+        var material_spotlight_mesh = new THREE.MeshBasicMaterial({
+            color: 0xffffff
+        });
+        material_spotlight_mesh.wireframe = true;
+
+        //then create the spotlight geometry
+        var mesh_spotlight = new THREE.Mesh(geometry_spotlight_mesh, material_spotlight_mesh);
+        scene.add(mesh_spotlight);
+        mesh_spotlight.position.z += 150;
+
+
+        var spotlight = new THREE.SpotLight({
+            color: 0xffff00
+        }, 1);
+
+        spotlight.angle = 1;
+        spotlight.penumbra = 0.5;
+        spotlight.decay = 1;
+        spotlight.distance = 700;
+        spotlight.castShadow = true;
+        spotlight.shadow.camera.near = 100;
+        spotlight.shadow.camera.far = 700;
+        spotlight.target = floor;
+        scene.add(spotlight);
+        if (spotlight.position.y <= 0) {
+            floor.receiveShadow = false;
+            fence0.receiveShadow = false;
+            fence1.receiveShadow = false;
+            fence2.receiveShadow = false;
+            fence3.receiveShadow = false;
+            fence4.receiveShadow = false;
+            fence5.recieveShadow = false;
+        } else {
+            floor.receiveShadow = true;
+            fence0.receiveShadow = true;
+            fence1.receiveShadow = true;
+            fence2.receiveShadow = true;
+            fence3.receiveShadow = true;
+            fence4.receiveShadow = true;
+            fence5.receiveShadow = true;
+        }
+        spotlight.position.z += 150;
+
+
+        //12. Adding Initial Model
+
+
+        //12.1 MESH LOADER
+        var loader = new THREE.PLYLoader();
+/*
+        var.mtlLoader = new THREE.mtlLoader();
+        mtlLoader.load("models/rock_3.mtl", function(materials){
+
+          materials.preload();
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+
+          objLoader.load("models/rock_3.obj", function(mesh){
+
+            scene.add(mesh);
+          });
+
+        });
+*/
+
+        // 4. Camera features
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.maxPolarAngle = Math.PI * 0.5;
+        var currI = 0;
+
+        // 10. Add Keyboard Listener
+        //        window.addEventListener('keydown', handleKeyDown, false);
+        CreateScene();
+
+
+        // 3. Rendering the scene aka. update loop
+        function updater() {
+            renderer.render(scene, camera);
+            requestAnimationFrame(updater);
+            animate();
+        }
+
+
+        updater();
+
+        function animate() {
+            requestAnimationFrame(MyUpdateLoop);
+            var distant = 400;
+            var angle = 1.0;
+            var time = performance.now() * 0.001;
+            spotlight.position.y = Math.cos(time * angle / 2) * distant;
+            spotlight.position.x = Math.sin(time * angle / 2) * distant;
+            mesh_spotlight.position.y = Math.cos(time * angle / 2) * distant;
+            mesh_spotlight.position.x = Math.sin(time * angle / 2) * distant;
+            angle += 2;
+        }
+
+        buildGui();
+    </script>
+</body>
+
+</html>
